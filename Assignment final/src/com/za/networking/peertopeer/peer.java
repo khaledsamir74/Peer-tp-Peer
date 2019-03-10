@@ -33,5 +33,45 @@ public class peer {
 		serverThread.start();
 		new peer().updateListenToPeers(bufferedReader, myIp, serverThread);
 	}
-	
+	public void updateListenToPeers(BufferedReader bufferedReader, String username, Serverthread serverThread) throws Exception{
+    System.out.println("Online Ips" + ":" + "Port Number");
+	for(int i = 0;i<onlineIps.size();i++){
+        System.out.println(onlineIps.get(i) + ":" + portNumbers.get(i));
+    }
+    System.out.println("Enter Hostname : port num");
+	System.out.println("peers to recieve messeges from (s to skip)");
+	String input = bufferedReader.readLine();
+	String[] inputValues = input.split(" ");
+	for(int i = 0;i < inputValues.length; i++){
+	    String [] tmp = inputValues[i].split(":");
+	    if(onlineIps.contains(tmp[0]))
+        {
+            if(portNumbers.get(i).equals(tmp[1])){
+
+            }else{
+                System.out.println("Wrong Input!");
+                return;
+            }
+        }else
+        {
+            System.out.println("Wrong Input!");
+            return;
+        }
+    }
+	if (!input.equals("s")) for (int  i = 0; i < inputValues.length; i++) {
+		String[] address = inputValues[i].split(":");
+		Socket socket = null;
+		try {
+			socket = new Socket(address[0], Integer.valueOf(address[1]));
+			new Peerthread(socket).start();
+		}
+		catch(Exception e) {
+			if (socket != null) socket.close();
+			else System.out.println("Invalid input, Skipping to next step");
+		}
+	}
+	communication(bufferedReader,username,serverThread);
+}
+
+
 }
